@@ -2,7 +2,9 @@ package dataStructure;
 
 import utils.Point3D;
 
-public class DataNode implements node_data {
+import java.io.Serializable;
+
+public class DataNode implements node_data, Serializable {
     private int Key;
     private double Weight;
     private Point3D Location;
@@ -14,6 +16,13 @@ public class DataNode implements node_data {
         this.Weight = 0;
         this.Location = null;
         this.Info = null;
+        this.tag = 0;
+    }
+    public DataNode(int key){
+        this.Key = key;
+        this.Weight = 0;
+        this.Location =null;
+        this.Info = "";
         this.tag = 0;
     }
 
