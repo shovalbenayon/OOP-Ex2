@@ -11,10 +11,10 @@ public class DataNode implements node_data, Serializable {
     private String Info;
     private int tag;
 
-    public DataNode(){
-        this.Key = 0;
+    public DataNode(int i, Point3D p){
+        this.Key = i;
         this.Weight = 0;
-        this.Location = null;
+        this.Location = p;
         this.Info = null;
         this.tag = 0;
     }
@@ -33,6 +33,13 @@ public class DataNode implements node_data, Serializable {
         this.Info = info;
         this.tag = tag;
     }
+    public DataNode(int key , double weight , Point3D l ){
+        this.Key = key;
+        this.Weight = weight;
+        this.Location = new Point3D(l.x() , l.y() , l.z());
+        this.Info = "";
+        this.tag = 0;
+    }
 
     public DataNode(DataNode oth){
         this.Key = oth.Key;
@@ -40,6 +47,14 @@ public class DataNode implements node_data, Serializable {
         this.Weight = oth.Weight;
         this.Info = oth.Info;
         this.Location= new Point3D(oth.Location);
+    }
+
+    public DataNode(Point3D p) {
+        this.Key = 0;
+        this.Weight = 0;
+        this.Location = new Point3D(p.x() , p.y() , p.z());
+        this.Info = "";
+        this.tag = 0;
     }
 
     @Override

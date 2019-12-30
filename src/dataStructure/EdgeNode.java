@@ -42,6 +42,14 @@ public class EdgeNode implements edge_data, Serializable {
         this.Tag = 0;
     }
 
+    public EdgeNode(int src, int dest) {
+        this.Source = src;
+        this.Destination = dest;
+        this.Weight = 0;
+        this.Info = null;
+        this.Tag = 0;
+    }
+
     @Override
     public int getSrc() {
         return this.Source;

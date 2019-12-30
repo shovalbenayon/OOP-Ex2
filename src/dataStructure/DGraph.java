@@ -1,10 +1,9 @@
 package dataStructure;
-import com.sun.corba.se.impl.orbutil.graph.NodeData;
+
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class DGraph implements graph, Serializable {
@@ -14,6 +13,17 @@ public class DGraph implements graph, Serializable {
 	private int EM_size;
 	private int MC;
 
+	public DGraph(DGraph g) {
+		this.Nodes_Map = g.Nodes_Map;
+		this.Edges_Map = g.Edges_Map;
+		this.NM_size = g.NM_size;
+		this.EM_size = g.EM_size;
+		this.MC = g.MC;
+	}
+
+	public DGraph(){
+
+	}
 	/**
 	 * this method returns the node data by the key
 	 * @param key - the node_id
@@ -172,34 +182,12 @@ public class DGraph implements graph, Serializable {
 		return MC;
 	}
 
-	public static void main(String[] args) {
-//		DGraph g = new DGraph();
-//		node_data a = new DataNode( 1);
-//		node_data k = new DataNode( 2);
-//		node_data h = new DataNode( 3);
-//		node_data s = new DataNode( 4);
-//		node_data l = new DataNode( 5);
-//	//	edge_data e = new EdgeNode(1,2, 7);
-//		g.addNode(a);
-//		g.addNode(k);
-//		g.addNode(h);
-//		g.addNode(s);
-//		g.addNode(l);
-//			g.connect(1, 3, 8);
-//			g.connect(1, 4, 9);
-//			g.connect(1, 5, 10);
-//			g.connect(5,1,4);
-//			g.connect(4, 3, 11);
-//			g.connect(2, 3, 12);
-//
-//		g.connect(1,2,7);
-//		System.out.println(g.getEdge(1,3).getWeight());
-//		g.removeEdge(1,2);
-//		System.out.println(g.getEdge(1,2));
-//		g.removeEdge(2,3);
-//		System.out.println(g.getEdge(2,3).getWeight());
-//		g.removeNode(1);
-//		System.out.println(g.getEdge(5,1).getWeight());
 
+	public Map<Integer, node_data> get_Node_Hash() {
+		return this.Nodes_Map;
+	}
+
+	public HashMap<Integer, HashMap<Integer, edge_data>> get_Edge_Hash() {
+		return this.Edges_Map;
 	}
 }
