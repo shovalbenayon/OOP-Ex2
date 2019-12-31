@@ -1,10 +1,12 @@
 package dataStructure;
 
+import com.sun.corba.se.impl.orbutil.graph.NodeData;
 import utils.Point3D;
 
+import javax.xml.soap.Node;
 import java.io.Serializable;
 
-public class DataNode implements node_data, Serializable {
+public class DataNode implements node_data, Serializable, Comparable {
     private int Key;
     private double Weight;
     private Point3D Location;
@@ -100,5 +102,12 @@ public class DataNode implements node_data, Serializable {
     @Override
     public void setTag(int t) {
         this.tag = t;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (this.getWeight() > ((DataNode)o).getWeight())
+            return 1;
+        return 0;
     }
 }

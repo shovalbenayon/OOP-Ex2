@@ -1,6 +1,8 @@
 package dataStructure;
 
 
+import utils.Point3D;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,9 +23,7 @@ public class DGraph implements graph, Serializable {
 		this.MC = g.MC;
 	}
 
-	public DGraph(){
-
-	}
+	public DGraph(){ ;}
 	/**
 	 * this method returns the node data by the key
 	 * @param key - the node_id

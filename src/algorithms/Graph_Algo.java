@@ -3,6 +3,7 @@ package algorithms;
 import java.io.*;
 import java.util.*;
 
+import com.sun.corba.se.impl.orbutil.graph.NodeData;
 import dataStructure.*;
 
 /**
@@ -15,6 +16,10 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 	private DGraph graphalgo = new DGraph();
 
 	public Graph_Algo(){;}
+
+	public Graph_Algo(DGraph dgraph) {
+		this.graphalgo = dgraph;
+	}
 
 
 	/**
@@ -160,19 +165,21 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 			anyNode.setInfo("Visited");
 			Collection<edge_data> edgesCol = this.graphalgo.getE(anyNode.getKey()); // anyNode edges
 
-			for (edge_data graphEdge : edgesCol) {
-				node_data nNode = this.graphalgo.getNode(graphEdge.getDest()); // Destination node
+			if (edgesCol != null) {
+				for (edge_data graphEdge : edgesCol) {
+					node_data nNode = this.graphalgo.getNode(graphEdge.getDest()); // Destination node
 
-				if (anyNode.getWeight() + graphEdge.getWeight() < nNode.getWeight()) { // Relaxation
-					nNode.setWeight(anyNode.getWeight() + graphEdge.getWeight());
-					nNode.setTag(anyNode.getKey());
+					if (anyNode.getWeight() + graphEdge.getWeight() < nNode.getWeight()) { // Relaxation
+						nNode.setWeight(anyNode.getWeight() + graphEdge.getWeight());
+						nNode.setTag(anyNode.getKey());
 
-					if (!nNode.getInfo().equals("Visited"))
 						gN.add(nNode);
-				}
-			}
-		}
+						}
+					}
 
+				}
+
+			}
 		return this.graphalgo.getNode(dest).getWeight();
 	}
 
@@ -190,13 +197,21 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 		LinkedList<node_data> pathNodes = new LinkedList<node_data>();
 		node_data anyNode = this.graphalgo.getNode(dest);
 
-		while (anyNode.getKey() != src) { // Build a path using anyNode's predecessor
+		while (anyNode.getKey() != src) { // Build a destination -> source path using anyNode's predecessor
 			pathNodes.add(anyNode);
 			anyNode = this.graphalgo.getNode(anyNode.getTag());
 		}
 
 		pathNodes.add(anyNode);
-		return pathNodes;
+		LinkedList<node_data> newPathNodes = new LinkedList<node_data>();
+		int i = 1;
+
+		while (i <= pathNodes.size()) { // Change path to source -> destination
+			newPathNodes.add(pathNodes.get(pathNodes.size() - i));
+			i++;
+		}
+
+		return newPathNodes;
 	}
 
 	/**

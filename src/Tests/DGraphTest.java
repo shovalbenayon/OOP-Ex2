@@ -1,10 +1,7 @@
 package Tests;
 
 import com.sun.corba.se.impl.orbutil.graph.NodeData;
-import dataStructure.DGraph;
-import dataStructure.DataNode;
-import dataStructure.EdgeNode;
-import dataStructure.node_data;
+import dataStructure.*;
 import org.junit.Test;
 import utils.Point3D;
 
@@ -71,7 +68,6 @@ public class DGraphTest {
      dg.addNode(nd3);
      dg.addNode(nd4);
      dg.addNode(nd5);
-
     }
 
     @Test
@@ -93,6 +89,11 @@ public class DGraphTest {
      dg.connect(3,1,6666);
      dg.connect(2,3,5555);
      dg.connect(3,2,4444);
+
+
+     assertEquals(2 , dg.getE(3).size());
+     assertEquals(2 , dg.getE(1).size());
+     assertEquals(2 , dg.getE(2).size());
 
     }
 
