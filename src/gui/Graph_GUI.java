@@ -1,6 +1,7 @@
-package algorithms;
+package gui;
 
 
+import algorithms.Graph_Algo;
 import dataStructure.*;
 import utils.Point3D;
 import java.awt.*;
