@@ -20,7 +20,8 @@ public class EdgeNode implements edge_data, Serializable {
 
     public EdgeNode(int source , int dest , double weight, String info , int tag){
         this.Source = source;
-        this.Weight = weight;
+        if (weight >= 0)
+            this.Weight = weight;
         this.Destination = dest;
         this.Info = info;
         this.Tag = tag;
@@ -29,7 +30,8 @@ public class EdgeNode implements edge_data, Serializable {
     public EdgeNode(EdgeNode oth){
         this.Source = oth.Source;
         this.Destination = oth.Destination;
-        this.Weight = oth.Weight;
+        if (oth.Weight >= 0)
+            this.Weight = oth.Weight;
         this.Info = oth.Info;
         this.Tag = oth.Tag;
     }
@@ -37,7 +39,8 @@ public class EdgeNode implements edge_data, Serializable {
     public EdgeNode(int src, int dest, double w) {
         this.Source = src;
         this.Destination = dest;
-        this.Weight = w;
+        if (w >= 0)
+            this.Weight = w;
         this.Info = null;
         this.Tag = 0;
     }
