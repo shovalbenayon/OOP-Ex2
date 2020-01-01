@@ -1,9 +1,8 @@
 package algorithms;
 
-import algorithms.Graph_Algo;
+
 import dataStructure.*;
 import utils.Point3D;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,63 +13,77 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
-import javax.swing.JDialog;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class Graph_GUI extends JFrame implements ActionListener, MouseListener,Serializable
 {
-    private static JFrame frame;
-    graph Dgraph;
-    LinkedList<Point3D> points = new LinkedList<Point3D>();
-    ArrayList<node_data> SP= new ArrayList<node_data>();
 
-    public Graph_GUI()
+    private graph Dgraph = new DGraph();
+    private Graph_Algo graph_algo = new Graph_Algo();
+    private ArrayList<node_data> SP= new ArrayList<>();
+
+
+    /**
+     * Init the GUI
+     */
+    private Graph_GUI()
     {
         initGUI();
     }
+
+    /**
+     * Init GUI with existing graph
+     * @param g - graph to init
+     */
     public Graph_GUI(graph g )
     {
         this.Dgraph = g;
+        this.graph_algo.init(g);
         initGUI();
+
     }
+
+    /**
+     * variables to init the GUI window
+     */
     private void initGUI()
     {
-        this.setSize(1000, 1000);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(this.graph_algo.get_Width(), this.graph_algo.get_Height()); // set the size of the window according the existing graph
+       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         MenuBar menuBar = new MenuBar();
 
-        Menu File = new Menu("File");
+        Menu File = new Menu("File"); //main's manu
         menuBar.add(File);
         this.setMenuBar(menuBar);
 
-        Menu Functions = new Menu("Functions");
+        Menu Functions = new Menu("Graph Algo Functions");//main's manu
         menuBar.add(Functions);
         this.setMenuBar(menuBar);
 
-        Menu Size = new Menu("Size");
-        menuBar.add(Size);
+        Menu DGraph1 = new Menu("DGraph Functions");//main's manu
+        menuBar.add(DGraph1);
         this.setMenuBar(menuBar);
 
-        MenuItem IsConnected = new MenuItem("IsConnected");
+        MenuItem IsConnected = new MenuItem("Is Connected");
         IsConnected.addActionListener(this);
 
-        MenuItem ShortestPathDist = new MenuItem("ShortestPathDist");
+        MenuItem ShortestPathDist = new MenuItem("Shortest Path Dist");
         ShortestPathDist.addActionListener(this);
 
-        MenuItem ShortestPath = new MenuItem("ShortestPath");
+        MenuItem ShortestPath = new MenuItem("Shortest Path");
         ShortestPath.addActionListener(this);
 
         MenuItem TSP = new MenuItem("TSP");
         TSP.addActionListener(this);
 
-        MenuItem SaveToFile = new MenuItem("SaveToFile");
+        MenuItem SaveToFile = new MenuItem("Save To File");
         SaveToFile.addActionListener(this);
 
-        MenuItem InitFromFile = new MenuItem("InitFromFile");
+        MenuItem InitFromFile = new MenuItem("Init From File");
         InitFromFile.addActionListener(this);
 
         MenuItem Nodes_Size = new MenuItem("Nodes Size");
@@ -79,11 +92,16 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         MenuItem Edges_size = new MenuItem("Edges size");
         Edges_size.addActionListener(this);
 
+        MenuItem connect = new MenuItem("Connect");
+        connect.addActionListener(this);
+
         File.add(SaveToFile);
         File.add(InitFromFile);
 
-        Size.add(Nodes_Size);
-        Size.add(Edges_size);
+        DGraph1.add(Nodes_Size);
+        DGraph1.add(Edges_size);
+        DGraph1.add(connect);
+
 
         Functions.add(ShortestPath);
         Functions.add(ShortestPathDist);
@@ -93,13 +111,17 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         this.addMouseListener(this);
     }
 
+    /**
+     * paint the graph
+     * @param g graph
+     */
     public void paint(Graphics g)
     {
         super.paint(g);
         Collection<node_data> col = Dgraph.getV();
         Iterator<node_data> iterNodes = col.iterator();
 
-        while (iterNodes.hasNext())
+        while (iterNodes.hasNext()) // draw the Data Nodes
         {
             g.setColor(Color.BLUE);
             node_data temp = iterNodes.next();
@@ -116,7 +138,7 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
             if (edgeCol !=null) {
                 Iterator<edge_data> iterEdge = edgeCol.iterator();
 
-                while (iterEdge.hasNext()) {
+                while (iterEdge.hasNext()) { // draw the Edges nodes
                     {
                         edge_data ed = iterEdge.next();
                         node_data start = this.Dgraph.getNode(ed.getSrc());
@@ -128,10 +150,11 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
                         String weight = String.valueOf(ed.getWeight());
 
 
-                        double arrowX = ((end.getLocation().x()+2) * 8 + (start.getLocation().x())+2 )/ 9;
-                        double arrowY = ((end.getLocation().y()+2 )* 8 + (start.getLocation().y())+2) / 9;
+                        //draw the direction of the Edge
+                        double directionX = ((end.getLocation().x()+2) * 8 + (start.getLocation().x())+2 )/ 9;
+                        double  directionY = ((end.getLocation().y()+2 )* 8 + (start.getLocation().y())+2) / 9;
                         g.setColor(Color.YELLOW);
-                        g.fillOval((int) arrowX, (int) arrowY, 10, 10);
+                        g.fillOval((int) directionX, (int) directionY, 10, 10);
 
                         g.setColor(Color.BLACK);
                         g.drawString(weight, (int) ((start.getLocation().x() + end.getLocation().x()) / 2), (int) (start.getLocation().y() + end.getLocation().y()) / 2);
@@ -142,10 +165,245 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         }
 
     }
-    @Override
+
+    /**
+     * paint the graph by the selected algorithms
+     * @param e the algorithms option
+     */
     public void actionPerformed(ActionEvent e)
     {
         String str = e.getActionCommand();
+        switch (str){
+            case "Shortest Path Dist":
+                ShortestPathDist();
+                break;
+            case "Is Connected":
+                IsConnected();
+                break;
+            case "Init From File":
+                InitFromFile();
+                break;
+            case "Shortest Path":
+                 ShortestPath();
+                break;
+            case "Save To File":
+                SaveToFile();
+                break;
+            case "TSP":
+                TSP();
+                break;
+            case "Edges size":
+                EdgesSize();
+                break;
+            case "Nodes Size":
+                NodesSize();
+                break;
+            case "Connect":
+                connect();
+                break;
+
+        }
+
+    }
+
+    /**
+     * connect between 2 Nodes
+     */
+    private void connect() {
+
+        JFrame frame = new JFrame();
+        String source = JOptionPane.showInputDialog(frame,"Source Node");
+        String dest = JOptionPane.showInputDialog(frame,"Destination Node");
+        String weight = JOptionPane.showInputDialog(frame , "Weight of the Edge");
+        try
+        {
+            int src = Integer.parseInt(source);
+            int des = Integer.parseInt(dest);
+            double wet = Double.parseDouble(weight);
+            this.Dgraph.connect(src , des, wet);
+            this.graph_algo.init(this.Dgraph);
+            repaint();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void TSP(){
+
+    }
+
+    /**
+     * shortest path drawing, open a window with the path of the nodes and then open a new window with the
+     * drawing og the new graph . only with the shortest path
+     */
+    private void ShortestPath(){
+
+        Graph_GUI SP_Graph = new Graph_GUI();
+        DGraph dg = new DGraph();
+
+        List<node_data> NodesPath = new ArrayList<>();
+
+        JFrame frame = new JFrame();
+        String source = JOptionPane.showInputDialog(frame,"Source Node");
+        String dest = JOptionPane.showInputDialog(frame,"Destination Node");
+        try
+        {
+            int src = Integer.parseInt(source);
+            int des = Integer.parseInt(dest);
+            double NodesPathDouble = this.graph_algo.shortestPathDist(src , des);
+            if (NodesPathDouble == Double.POSITIVE_INFINITY) {
+                JOptionPane.showMessageDialog(frame, "Not Valid Path between 2 Nodes ");
+                return;
+            }
+            else {
+                StringBuilder pathNodes = new StringBuilder();
+                NodesPath =  this.graph_algo.shortestPath(src, des);
+                for (int i = 0 ; i< NodesPath.size() ; i++)
+                    pathNodes.append(NodesPath.get(i).getKey() + " " );
+                JOptionPane.showMessageDialog(frame , pathNodes + "\n enter ok to see the graph");
+
+
+            }
+
+        }
+        catch (Exception e2) {
+            e2.printStackTrace();
+        }
+        if (NodesPath != null) {
+            Iterator<node_data> iterNodes = NodesPath.iterator();
+            ArrayList<Integer> NodesArray = new ArrayList<>();
+            while (iterNodes.hasNext()) {
+                node_data temp = iterNodes.next();
+                dg.addNode(temp);
+                NodesArray.add(temp.getKey());
+            }
+            for (int i = 0 ; i < NodesArray.size() -1; i++){
+
+                node_data cur = dg.getNode(NodesArray.get(i));
+                node_data next = dg.getNode(NodesArray.get(i+1));
+                double weight = this.Dgraph.getEdge(cur.getKey(), next.getKey()).getWeight();
+                dg.connect(cur.getKey(), next.getKey(), weight);
+
+            }
+        }
+
+        else
+        {
+            JOptionPane.showMessageDialog(frame, "char not valid ");
+        }
+
+        SP_Graph.Dgraph= dg;
+        SP_Graph.graph_algo.init(dg);
+        SP_Graph.initGUI();
+        SP_Graph.setVisible(true);
+        SP_Graph.repaint();
+
+        repaint();
+
+    }
+
+    /**
+     * shortest path value, open a window with the value
+     */
+    private void ShortestPathDist(){
+
+        JFrame frame = new JFrame();
+        double shortestpath ;
+        String start = JOptionPane.showInputDialog(frame,"Source Node");
+        String finish = JOptionPane.showInputDialog(frame,"Destination Node");
+        try
+        {
+            int src = Integer.parseInt(start);
+            int des = Integer.parseInt(finish);
+
+            shortestpath = this.graph_algo.shortestPathDist(src, des);
+
+            if(shortestpath != Double.POSITIVE_INFINITY)
+            {
+                JOptionPane.showMessageDialog(frame, "The shortest Path distance between "+src +" and "+ des +" is: " + shortestpath);
+            }
+
+            else
+            {
+                JOptionPane.showMessageDialog(frame, "Not Valid Path between 2 Nodes");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        repaint();
+
+    }
+
+    /**
+     * open a new window and show if the graph is connected or not. false or true answer
+     */
+    private void IsConnected(){
+
+        JFrame frame = new JFrame();
+        boolean ifConnected = this.graph_algo.isConnected();
+
+        JOptionPane.showMessageDialog(frame , "The graph is all connected? " + ifConnected);
+
+    }
+
+    /**
+     * open a new window and showing the nodes size
+     */
+    private void NodesSize(){
+        JFrame frame = new JFrame();
+        int size = this.graph_algo.getnodeSize();
+
+        JOptionPane.showMessageDialog(frame , "Nodes size is : " + size);
+
+    }
+
+    /**
+     * open a new window and showing the Edges size
+     */
+
+    private void EdgesSize(){
+        JFrame frame = new JFrame();
+        int size = this.graph_algo.getedgeSize();
+        JOptionPane.showMessageDialog(frame , "Edges size is : " + size);
+
+    }
+
+    /**
+     * save to file option
+     */
+    private void SaveToFile(){
+
+        JFrame frame = new JFrame();
+        FileDialog pathToSave = new FileDialog(frame, "Save the graph", FileDialog.SAVE);
+        pathToSave.setVisible(true);
+        String filename = pathToSave.getFile();
+        if (filename != null)
+        {
+            this.graph_algo.save(pathToSave.getDirectory()+filename+".txt");
+        }
+    }
+
+    /**
+     * init the graph from file
+     */
+    private void InitFromFile(){
+
+        JFrame frameToChoose = new JFrame("Test");
+        frameToChoose.setLayout(new FlowLayout());
+        frameToChoose.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+
+            this.graph_algo.init(selectedFile.getPath());
+            this.Dgraph = this.graph_algo.copy();
+            repaint();
+        }
+        frameToChoose.pack();
 
     }
 
@@ -155,33 +413,27 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
 
     @Override
     public void mousePressed(MouseEvent e) {
-
         int x = e.getX();
         int y = e.getY();
         Point3D p = new Point3D(x,y);
-        node_data new_node = new DataNode(Dgraph.nodeSize()+1 , p);
-        Dgraph.addNode(new_node);
+        node_data new_node = new DataNode(this.Dgraph.nodeSize()+1 , p);
+        this.Dgraph.addNode(new_node);
+        this.graph_algo.init(this.Dgraph);
         repaint();
-        System.out.println("mousePressed");
+
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        //System.out.println("mouseReleased");
-
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        //System.out.println("mouseEntered");
 
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        //System.out.println("mouseExited");
     }
-
-
 
 }

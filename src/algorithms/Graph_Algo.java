@@ -3,19 +3,22 @@ package algorithms;
 import java.io.*;
 import java.util.*;
 
-import com.sun.corba.se.impl.orbutil.graph.NodeData;
 import dataStructure.*;
+import utils.Range;
 
 /**
  * This empty class represents the set of graph-theory algorithms
  * which should be implemented as part of Ex2 - Do edit this class.
- * @author 
+ * @author shoval
  *
  */
 public class Graph_Algo implements graph_algorithms , Serializable {
-	private DGraph graphalgo = new DGraph();
+	private graph graphalgo = new DGraph();
 
-	public Graph_Algo(){;}
+
+	public Graph_Algo() {
+
+	}
 
 	public Graph_Algo(DGraph dgraph) {
 		this.graphalgo = dgraph;
@@ -24,49 +27,33 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 	/**
 	 * init the existing graph with g graph
+	 *
 	 * @param g the graph to init from
 	 */
 	public void init(graph g) {
-		DGraph dGraph = new DGraph();
-		Collection<node_data> new_data = (Collection<node_data>) g.getV(); //extract the DataNodes
-		Iterator<node_data> iter = new_data.iterator();
-
-		while (iter.hasNext()) {dGraph.addNode(iter.next());} // adding the nodes to the existing graph
-		iter = new_data.iterator();
-		while (iter.hasNext()) {
-			node_data temp = iter.next();
-			if(g.getE(temp.getKey()) != null) {
-				Collection<edge_data> new_edge = g.getE(temp.getKey());
-				Iterator<edge_data> iter_edge = new_edge.iterator();
-				while (iter_edge.hasNext()) {
-					edge_data t = iter_edge.next();
-					dGraph.connect(t.getSrc(), t.getDest(), t.getWeight());
-
-				}
-			}
-
-		}
-		this.graphalgo = dGraph;
+		this.graphalgo = g;
 	}
-	public int getnodeSize(){
+
+	public int getnodeSize() {
 		return graphalgo.nodeSize();
 	}
-	public int getedgeSize(){
+
+	public int getedgeSize() {
 		return graphalgo.edgeSize();
 	}
 
 	/**
 	 * init from file using Serializable
+	 *
 	 * @param file_name to init from
 	 */
 	public void init(String file_name) {
-		Graph_Algo g = new Graph_Algo();
-		try
-		{
+		Graph_Algo g;
+		try {
 			FileInputStream file = new FileInputStream(file_name);
 			ObjectInputStream in = new ObjectInputStream(file);
 
-			g = (Graph_Algo)in.readObject();
+			g = (Graph_Algo) in.readObject();
 			this.init(g.graphalgo);
 
 			in.close();
@@ -74,15 +61,9 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 			System.out.println("Object has been deserialized");
 			System.out.println(g);
-		}
-
-		catch(IOException ex)
-		{
+		} catch (IOException ex) {
 			System.out.println("IOException is caught");
-		}
-
-		catch(ClassNotFoundException ex)
-		{
+		} catch (ClassNotFoundException ex) {
 			System.out.println("ClassNotFoundException is caught");
 		}
 
@@ -90,9 +71,10 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 	/**
 	 * save to file using Serializable
+	 *
 	 * @param file_name to save
 	 */
-	public void save(String file_name){
+	public void save(String file_name) {
 		try {
 			FileOutputStream file = new FileOutputStream(file_name);
 			ObjectOutputStream out = new ObjectOutputStream(file);
@@ -104,8 +86,7 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 			System.out.println("Object has been serialized");
 
-		} catch(IOException ex)
-		{
+		} catch (IOException ex) {
 			System.out.println("IOException is caught");
 		}
 
@@ -114,6 +95,7 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 	/**
 	 * Returns true if and only if (iff) there is a valid path from EVREY node to each
 	 * other node. NOTE: assume directional graph - a valid path (a-->b) does NOT imply a valid path (b-->a).
+	 *
 	 * @return true if it is, false otherwise
 	 */
 	public boolean isConnected() {
@@ -121,7 +103,7 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 		for (int i = 0; i < vNodes.length; i++) // Initialize as not visited
 			vNodes[i] = false;
 
-		DFSUtil(this.graphalgo, 1, vNodes);
+		DFSUtil((DGraph) this.graphalgo, 1, vNodes);
 		for (int i = 0; i < vNodes.length; i++) // Check graphAlgo's connectivity
 			if (!vNodes[i]) return false;
 
@@ -138,7 +120,8 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 	/**
 	 * returns the length of the shortest path between src to dest
-	 * @param src - start node
+	 *
+	 * @param src  - start node
 	 * @param dest - end (target) node
 	 * @return length
 	 */
@@ -148,7 +131,7 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 		startNode.setInfo("Not visited");
 
 		Collection<node_data> nodesCol = this.graphalgo.getV();
-		PriorityQueue<node_data> gN = new PriorityQueue<node_data>();
+		PriorityQueue<node_data> gN = new PriorityQueue<>();
 
 		for (node_data graphNode : nodesCol) { // Initialize graphAlgo nodes parameters
 			if (graphNode.getKey() != src) {
@@ -174,19 +157,20 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 						nNode.setTag(anyNode.getKey());
 
 						gN.add(nNode);
-						}
 					}
-
 				}
 
 			}
+
+		}
 		return this.graphalgo.getNode(dest).getWeight();
 	}
 
 	/**
 	 * returns the the shortest path between src to dest - as an ordered List of nodes:
 	 * src--> n1-->n2-->...dest
-	 * @param src - start node
+	 *
+	 * @param src  - start node
 	 * @param dest - end (target) node
 	 * @return list of nodes
 	 */
@@ -194,7 +178,7 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 		if (this.shortestPathDist(src, dest) == Double.POSITIVE_INFINITY) // Check path nonexistence
 			return null;
 
-		LinkedList<node_data> pathNodes = new LinkedList<node_data>();
+		LinkedList<node_data> pathNodes = new LinkedList<>();
 		node_data anyNode = this.graphalgo.getNode(dest);
 
 		while (anyNode.getKey() != src) { // Build a destination -> source path using anyNode's predecessor
@@ -203,7 +187,7 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 		}
 
 		pathNodes.add(anyNode);
-		LinkedList<node_data> newPathNodes = new LinkedList<node_data>();
+		LinkedList<node_data> newPathNodes = new LinkedList<>();
 		int i = 1;
 
 		while (i <= pathNodes.size()) { // Change path to source -> destination
@@ -219,8 +203,9 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 	 * Note: this is NOT the classical traveling salesman problem,
 	 * as you can visit a node more than once, and there is no need to return to source node -
 	 * just a simple path going over all nodes in the list.
-	 * @param targets
-	 * @return
+	 *
+	 * @param targets the list we want to check
+	 * @return list of nodes
 	 */
 	public List<node_data> TSP(List<Integer> targets) {
 		if (targets.size() == 0) return null;
@@ -249,15 +234,39 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 	/**
 	 * Compute a deep copy of this graph.
+	 *
 	 * @return graph
 	 */
 	public graph copy() {
-		Graph_Algo new_graph = new Graph_Algo();
-		new_graph.init(this.graphalgo);
-		return (graph) new_graph.graphalgo;
+
+		graph Graph = new DGraph();
+		Collection<node_data> new_data = this.graphalgo.getV(); //extract the DataNodes
+		Iterator<node_data> iter = new_data.iterator();
+
+		while (iter.hasNext()) {
+			Graph.addNode(iter.next());
+		} // adding the nodes to the existing graph
+		iter = new_data.iterator();
+		while (iter.hasNext()) {
+			node_data temp = iter.next();
+			if (this.graphalgo.getE(temp.getKey()) != null) {
+				Collection<edge_data> new_edge = this.graphalgo.getE(temp.getKey());
+				Iterator<edge_data> iter_edge = new_edge.iterator();
+				while (iter_edge.hasNext()) {
+					edge_data t = iter_edge.next();
+					Graph.connect(t.getSrc(), t.getDest(), t.getWeight());
+				}
+			}
+		}
+		return Graph;
 	}
 
-	private DGraph transpose(){
+	/**
+	 * build a transpose graph
+	 * @return transpose graph
+	 */
+
+	private DGraph transpose() {
 		DGraph tranGraph = new DGraph();
 		Collection<node_data> dataCol = this.graphalgo.getV();
 		Iterator<node_data> iterNodes = dataCol.iterator();
@@ -265,19 +274,26 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 		while (iterNodes.hasNext()) tranGraph.addNode(iterNodes.next()); // Adding all nodes
 		iterNodes = dataCol.iterator();
 
-		while (iterNodes.hasNext()){
+		while (iterNodes.hasNext()) {
 			node_data temp = iterNodes.next();
-			if (this.graphalgo.getE(temp.getKey()) != null){
+			if (this.graphalgo.getE(temp.getKey()) != null) {
 				Collection<edge_data> edgeCol = this.graphalgo.getE(temp.getKey());
 				Iterator<edge_data> iterEdges = edgeCol.iterator();
-				while (iterEdges.hasNext()){
+				while (iterEdges.hasNext()) {
 					edge_data tempe = iterEdges.next();
-					tranGraph.connect(tempe.getDest() , tempe.getSrc() , tempe.getWeight()); // connect between destination to source
+					tranGraph.connect(tempe.getDest(), tempe.getSrc(), tempe.getWeight()); // connect between destination to source
 				}
 			}
 		}
 		return tranGraph;
 	}
+
+	/**
+	 * help to check if the graph is connected
+	 * @param anyGraph graph
+	 * @param startNode source node
+	 * @param vNodes the array of nodes
+	 */
 	private void DFSUtil(DGraph anyGraph, int startNode, Boolean[] vNodes) {
 		vNodes[startNode - 1] = true; // Mark specified node as visited
 
@@ -294,4 +310,46 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 			}
 		}
 	}
+
+	/**
+	 * width to gui
+	 * @return the width
+	 */
+	public int get_Width() {
+		int min = 0;
+		int max = 0;
+		Collection<node_data> col = this.graphalgo.getV();
+		for (node_data temp : col) {
+			if (temp.getLocation().x() < min)
+				min = (int) temp.getLocation().x();
+
+			if (temp.getLocation().x() > max)
+				max = (int) temp.getLocation().x();
+
+		}
+		Range rx = new Range(min*2, max*2);
+		return (int) rx.get_length();
+	}
+
+	/**
+	 * height to gui
+	 * @return height
+	 */
+	public int get_Height() {
+		int min = 0;
+		int max = 0;
+		Collection<node_data> col = this.graphalgo.getV();
+		for (node_data temp : col) {
+			if (temp.getLocation().y() < min)
+				min = (int) temp.getLocation().y();
+
+			if (temp.getLocation().y() > max)
+				max = (int) temp.getLocation().y();
+
+		}
+		Range ry = new Range(min *2 , max *2);
+		return (int) ry.get_length();
+	}
+
+
 }

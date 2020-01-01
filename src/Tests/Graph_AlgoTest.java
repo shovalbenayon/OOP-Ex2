@@ -1,8 +1,6 @@
 package Tests;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.LinkedList;
+
 import java.util.List;
 
 import dataStructure.DataNode;
@@ -15,6 +13,8 @@ import dataStructure.graph;
 import dataStructure.node_data;
 
 import utils.Point3D;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Graph_AlgoTest {
     DGraph myDG  = new DGraph();
@@ -36,19 +36,7 @@ public class Graph_AlgoTest {
         myDG.connect(4,6,5);
         myDG.connect(6,3,2);
         myDG.connect(6,5,1);
-//        myDG.connect(1,3,14);
-//        myDG.connect(1,4,9);
-//        myDG.connect(1,6,7);
-//        myDG.connect(3,1,14);
-//        myDG.connect(3,2,9);
-//        myDG.connect(3,4,2);
-//        myDG.connect(4,5,11);
-//        myDG.connect(4,3,2);
-//        myDG.connect(4,6,5);
-//        myDG.connect(4,1,9);
-//        myDG.connect(6,4,10);
-//        myDG.connect(6,5,15);
-//        myDG.connect(3,2,9);
+
         MYGA.init(myDG);
     }
 
@@ -56,13 +44,13 @@ public class Graph_AlgoTest {
     public void isConnected_test()
     {
 
-        assertEquals(false,MYGA.isConnected());
+        assertFalse(MYGA.isConnected());
         //adding 1 missing edge to make the graph connected
 
         myDG.connect(3,4,43);
 
         MYGA.init(myDG);
-        assertEquals(true,MYGA.isConnected());
+        assertTrue(MYGA.isConnected());
     }
     @Test
     public void shortestPathTest() {
@@ -90,32 +78,32 @@ public class Graph_AlgoTest {
 
 
     }
-    @Test
-    public void TSPTest()
-    {
-        List<Integer> lst = new LinkedList<>();
-        lst.add(1);
-        lst.add(2);
-        lst.add(3);
-
-        myDG.connect(3,4,43);
-        List<node_data> path= MYGA.TSP(lst);
-        System.out.println(path);
-        assertEquals((int)(path.remove(0)).getKey(),1);
-        assertEquals((int)(path.remove(0)).getKey(),4);
-        assertEquals((int)(path.remove(0)).getKey(),3);
-        assertEquals((int)(path.remove(0)).getKey(),2);
-        assertEquals((int)(path.remove(0)).getKey(),3);
-
-
-    }
+//    @Test
+//    public void TSPTest()
+//    {
+//        List<Integer> lst = new LinkedList<>();
+//        lst.add(1);
+//        lst.add(2);
+//        lst.add(3);
+//
+//        myDG.connect(3,4,43);
+//        List<node_data> path= MYGA.TSP(lst);
+//        System.out.println(path);
+//        assertEquals((int)(path.remove(0)).getKey(),1);
+//        assertEquals((int)(path.remove(0)).getKey(),4);
+//        assertEquals((int)(path.remove(0)).getKey(),3);
+//        assertEquals((int)(path.remove(0)).getKey(),2);
+//        assertEquals((int)(path.remove(0)).getKey(),3);
+//
+//
+//    }
     @Test
     public void copyTest()
     {
-
         graph g_copy = MYGA.copy();
         myDG.removeEdge(1,3);
         assertNotEquals(null,g_copy.getEdge(1, 3));
+        assertEquals(g_copy.getEdge(1,6).getWeight() , 1 , 0.0001);
     }
 
 }

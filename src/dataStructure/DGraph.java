@@ -2,6 +2,7 @@ package dataStructure;
 
 
 import utils.Point3D;
+import utils.Range;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -14,6 +15,7 @@ public class DGraph implements graph, Serializable {
 	private int NM_size;
 	private int EM_size;
 	private int MC;
+
 
 	public DGraph(DGraph g) {
 		this.Nodes_Map = g.Nodes_Map;
@@ -183,11 +185,5 @@ public class DGraph implements graph, Serializable {
 	}
 
 
-	public Map<Integer, node_data> get_Node_Hash() {
-		return this.Nodes_Map;
-	}
 
-	public HashMap<Integer, HashMap<Integer, edge_data>> get_Edge_Hash() {
-		return this.Edges_Map;
-	}
 }
