@@ -20,9 +20,11 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 
 	}
 
-	public Graph_Algo(DGraph dgraph) {
-		this.graphalgo = dgraph;
+	public Graph_Algo(graph graph) {
+		this.graphalgo = graph;
 	}
+
+
 
 
 	/**
@@ -295,6 +297,8 @@ public class Graph_Algo implements graph_algorithms , Serializable {
 	 * @param vNodes the array of nodes
 	 */
 	private void DFSUtil(DGraph anyGraph, int startNode, Boolean[] vNodes) {
+		if (vNodes.length < 1)
+			return;
 		vNodes[startNode - 1] = true; // Mark specified node as visited
 
 		if (anyGraph.getE(startNode) != null) { // Specified node must contain at least one edge
