@@ -11,6 +11,8 @@ import dataStructure.*;
 import utils.*;
 import gui.*;
 
+import javax.swing.*;
+
 
 /**
  * EX2 Structure test:
@@ -56,6 +58,7 @@ class Ex2Test {
         graph ans = new DGraph();
         return ans;
     }
+
     boolean drawGraph(graph g) {
         node_data v1 = new DataNode(1, new Point3D(25,90,0));
         node_data v2 = new DataNode(2, new Point3D(340,300,0));
@@ -79,6 +82,7 @@ class Ex2Test {
         _graph.connect(v2.getKey(), v5.getKey(), 1);
         Graph_GUI gui = new Graph_GUI(_graph);
         gui.setVisible(true);
+
         return true;
 
     }

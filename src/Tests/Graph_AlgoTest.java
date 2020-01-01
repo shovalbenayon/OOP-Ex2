@@ -1,19 +1,15 @@
 package Tests;
 
-
+import java.util.LinkedList;
 import java.util.List;
-
 import dataStructure.DataNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.graph;
 import dataStructure.node_data;
-
 import utils.Point3D;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Graph_AlgoTest {
@@ -78,25 +74,21 @@ public class Graph_AlgoTest {
 
 
     }
-//    @Test
-//    public void TSPTest()
-//    {
-//        List<Integer> lst = new LinkedList<>();
-//        lst.add(1);
-//        lst.add(2);
-//        lst.add(3);
-//
-//        myDG.connect(3,4,43);
-//        List<node_data> path= MYGA.TSP(lst);
-//        System.out.println(path);
-//        assertEquals((int)(path.remove(0)).getKey(),1);
-//        assertEquals((int)(path.remove(0)).getKey(),4);
-//        assertEquals((int)(path.remove(0)).getKey(),3);
-//        assertEquals((int)(path.remove(0)).getKey(),2);
-//        assertEquals((int)(path.remove(0)).getKey(),3);
-//
-//
-//    }
+    @Test
+    public void TSPTest()
+    {
+        List<Integer> lst = new LinkedList<>();
+        lst.add(1);
+        lst.add(6);
+        lst.add(5);
+        lst.add(2);
+
+        List<node_data> path= MYGA.TSP(lst);
+        assertEquals((int)(path.remove(0)).getKey(),1);
+        assertEquals((int)(path.remove(0)).getKey(),6);
+        assertEquals((int)(path.remove(0)).getKey(),5);
+        assertEquals((int)(path.remove(0)).getKey(),2);
+    }
     @Test
     public void copyTest()
     {
