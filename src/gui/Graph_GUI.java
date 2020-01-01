@@ -11,13 +11,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Graph_GUI extends JFrame implements ActionListener, MouseListener,Serializable
 {
@@ -96,12 +94,20 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         MenuItem connect = new MenuItem("Connect");
         connect.addActionListener(this);
 
+        MenuItem remove = new MenuItem("Remove Edge");
+        remove.addActionListener(this);
+
+        MenuItem remove_node = new MenuItem("Remove Node");
+        remove_node.addActionListener(this);
+
         File.add(SaveToFile);
         File.add(InitFromFile);
 
         DGraph1.add(Nodes_Size);
         DGraph1.add(Edges_size);
         DGraph1.add(connect);
+        DGraph1.add(remove);
+        DGraph1.add(remove_node);
 
 
         Functions.add(ShortestPath);
@@ -202,7 +208,12 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
             case "Connect":
                 connect();
                 break;
-
+            case "Remove Node":
+                RemoveNode();
+                break;
+            case "Remove Edge":
+                RemoveEdge();
+                break;
         }
 
     }
@@ -230,7 +241,116 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         }
     }
 
+    /**
+     * remove edge from the graph
+     */
+    private void RemoveEdge() {
+
+        JFrame frame = new JFrame();
+        String source = JOptionPane.showInputDialog(frame,"Source Node");
+        String dest = JOptionPane.showInputDialog(frame,"Destination Node");
+
+        try
+        {
+            int src = Integer.parseInt(source);
+            int des = Integer.parseInt(dest);
+
+            this.Dgraph.removeEdge(src, des);
+            this.graph_algo.init(this.Dgraph);
+            repaint();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * remove node from the graph
+     */
+    private void RemoveNode() {
+
+        JFrame frame = new JFrame();
+        String source = JOptionPane.showInputDialog(frame,"Node To Remove");
+        try
+        {
+            int src = Integer.parseInt(source);
+            this.Dgraph.removeNode(src);
+            this.graph_algo.init(this.Dgraph);
+            repaint();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void TSP(){
+
+        Graph_GUI TS = new Graph_GUI();
+        graph temp_gr = new DGraph();
+        List<node_data> TSPans = new LinkedList<>();
+        JFrame frame = new JFrame("TSP");
+        String insert = JOptionPane.showInputDialog(frame,"Insert List of Node (separated by spaces)");
+
+        try {
+            ArrayList<Integer> NodesInt = new ArrayList<Integer>();
+            //Splitting by space and inserting to a list of targets:
+            String[] input = insert.split(" ");
+            for (int i = 0; i < input.length; i++) {
+                int temp = Integer.parseInt(input[i]);
+                NodesInt.add(temp);
+            }
+            StringBuilder output = new StringBuilder();
+            TSPans = graph_algo.TSP(NodesInt);
+            if (TSPans == null) {
+                JOptionPane.showMessageDialog(frame, "No Path between 2 nodes", "TSP ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            else {
+                output.append("The path is: \n");
+                for (int i = 0; i < TSPans.size(); i++) {
+                    output.append(TSPans.get(i).getKey() + "");
+                    if (i != TSPans.size() - 1)
+                        output.append("->");
+                }
+                JOptionPane.showMessageDialog(frame, output + "\n enter ok to see the graph", "TSP", JOptionPane.INFORMATION_MESSAGE);
+                frame.setVisible(false);
+            }
+
+        } catch (Exception e1) {
+            JOptionPane.showMessageDialog(frame, e1.getMessage(), "TSP", JOptionPane.ERROR_MESSAGE);
+        }
+
+        if (TSPans != null) {
+            Iterator<node_data> iterNodes = TSPans.iterator();
+            ArrayList<Integer> NodesArray = new ArrayList<>();
+            while (iterNodes.hasNext()) {
+                node_data temp = iterNodes.next();
+                temp_gr.addNode(temp);
+                NodesArray.add(temp.getKey());
+            }
+            for (int i = 0 ; i < NodesArray.size() -1; i++){
+
+                node_data cur = temp_gr.getNode(NodesArray.get(i));
+                node_data next = temp_gr.getNode(NodesArray.get(i+1));
+                double weight = this.Dgraph.getEdge(cur.getKey(), next.getKey()).getWeight();
+                temp_gr.connect(cur.getKey(), next.getKey(), weight);
+
+            }
+        }
+
+        else
+        {
+            JOptionPane.showMessageDialog(frame, "char not valid ");
+        }
+
+        TS.Dgraph= temp_gr;
+        TS.graph_algo.init(temp_gr);
+        TS.initGUI();
+        TS.setVisible(true);
+        TS.repaint();
+
+        repaint();
+
 
     }
 
@@ -258,10 +378,13 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
                 return;
             }
             else {
-                StringBuilder pathNodes = new StringBuilder();
+                StringBuilder pathNodes = new StringBuilder("The path is: \n");
                 NodesPath =  this.graph_algo.shortestPath(src, des);
-                for (int i = 0 ; i< NodesPath.size() ; i++)
-                    pathNodes.append(NodesPath.get(i).getKey() + " " );
+                for (int i = 0 ; i< NodesPath.size() ; i++) {
+                    pathNodes.append(NodesPath.get(i).getKey());
+                    if (i != NodesPath.size() -1)
+                        pathNodes.append("->");
+                }
                 JOptionPane.showMessageDialog(frame , pathNodes + "\n enter ok to see the graph");
 
 
@@ -345,7 +468,7 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         JFrame frame = new JFrame();
         boolean ifConnected = this.graph_algo.isConnected();
 
-        JOptionPane.showMessageDialog(frame , "The graph is all connected? " + ifConnected);
+        JOptionPane.showMessageDialog(frame , "The graph is all connected? \n" + ifConnected);
 
     }
 
@@ -356,7 +479,7 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
         JFrame frame = new JFrame();
         int size = this.graph_algo.getnodeSize();
 
-        JOptionPane.showMessageDialog(frame , "Nodes size is : " + size);
+        JOptionPane.showMessageDialog(frame , "Nodes size is : \n" + size);
 
     }
 
@@ -367,7 +490,7 @@ public class Graph_GUI extends JFrame implements ActionListener, MouseListener,S
     private void EdgesSize(){
         JFrame frame = new JFrame();
         int size = this.graph_algo.getedgeSize();
-        JOptionPane.showMessageDialog(frame , "Edges size is : " + size);
+        JOptionPane.showMessageDialog(frame , "Edges size is : \n" + size);
 
     }
 
